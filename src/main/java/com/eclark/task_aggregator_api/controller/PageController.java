@@ -10,10 +10,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import com.eclark.task_aggregator_api.entity.ListItemsWrapper;
-import com.eclark.task_aggregator_api.entity.Task;
-import com.eclark.task_aggregator_api.entity.TaskItemsWrapper;
-import com.eclark.task_aggregator_api.entity.TaskList;
+import com.eclark.task_aggregator_api.model.ListItemsWrapper;
+import com.eclark.task_aggregator_api.model.Task;
+import com.eclark.task_aggregator_api.model.TaskItemsWrapper;
+import com.eclark.task_aggregator_api.model.TaskList;
 import com.eclark.task_aggregator_api.service.GoogleTasksService;
 
 import jakarta.servlet.RequestDispatcher;

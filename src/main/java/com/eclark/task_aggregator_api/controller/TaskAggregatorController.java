@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.eclark.task_aggregator_api.entity.ListItemsWrapper;
-import com.eclark.task_aggregator_api.entity.TaskItemsWrapper;
+import com.eclark.task_aggregator_api.model.ListItemsWrapper;
+import com.eclark.task_aggregator_api.model.TaskItemsWrapper;
 import com.eclark.task_aggregator_api.service.GoogleEventsService;
 import com.eclark.task_aggregator_api.service.GoogleTasksService;
 

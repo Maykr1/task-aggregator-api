@@ -1,4 +1,4 @@
-package com.eclark.task_aggregator_api.entity;
+package com.eclark.task_aggregator_api.model;
 
 import java.util.List;
 

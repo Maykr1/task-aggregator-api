@@ -4,16 +4,6 @@ spring:
   
   profiles:
     active: "${ACTIVE_PROFILE:local}"
-  
-  datasource:
-    url: ${DB_CONNECT_URL}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
-    driver-class-name: org.postgresql.Driver
-
-  jpa:
-    hibernate:
-      ddl-auto: update
 
   security:
     oauth2:
@@ -31,6 +21,3 @@ spring:
         provider:
           google:
             issuer-uri: https://accounts.google.com
-
-environment:
-  
