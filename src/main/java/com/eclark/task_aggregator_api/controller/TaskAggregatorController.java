@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.eclark.task_aggregator_api.entity.ListItemsWrapper;
+import com.eclark.task_aggregator_api.entity.TaskItemsWrapper;
 import com.eclark.task_aggregator_api.service.GoogleEventsService;
 import com.eclark.task_aggregator_api.service.GoogleTasksService;
 
@@ -23,29 +25,29 @@ public class TaskAggregatorController {
     private static final Logger logger = LoggerFactory.getLogger(TaskAggregatorController.class);
 
     @GetMapping("/tasks")
-    public ResponseEntity<Object> getGoogleTasks() {
+    public ResponseEntity<ListItemsWrapper> getAllLists() {
         long start = System.currentTimeMillis();
         logger.info("Starting to retrieve Google Tasks");
 
-        Object response = googleTasksService.getGoogleTasks();
+        ListItemsWrapper response = googleTasksService.getAllLists();
 
         logger.info("[{} ms] - Finished getting all Google Tasks", System.currentTimeMillis() - start);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/tasks2")
-    public ResponseEntity<Object> getGoogleTasks2(@PathVariable String taskListId) {
+    @GetMapping("/tasks/{id}")
+    public ResponseEntity<TaskItemsWrapper> getTasksByListId(@PathVariable("id") String taskListId) {
         long start = System.currentTimeMillis();
         logger.info("Starting to retrieve Google Tasks for list: {}", taskListId);
 
-        Object response = googleTasksService.getGoogleTasks2(taskListId);
+        TaskItemsWrapper response = googleTasksService.getTasksByListId(taskListId);
 
         logger.info("[{} ms] - Finished getting all Google Tasks for list: {}", System.currentTimeMillis() - start, taskListId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/events")
-    public ResponseEntity<Object> getEventsToday() {
+    public ResponseEntity<Object> getTodaysEvents() {
         long start = System.currentTimeMillis();
         logger.info("Starting to retrieve all Google Events for today");
 

@@ -5,6 +5,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
+import com.eclark.task_aggregator_api.entity.ListItemsWrapper;
+import com.eclark.task_aggregator_api.entity.TaskItemsWrapper;
 import com.eclark.task_aggregator_api.service.GoogleTasksService;
 
 import lombok.RequiredArgsConstructor;
@@ -15,43 +17,53 @@ public class GoogleTasksServiceImpl implements GoogleTasksService {
     private static final Logger logger = LoggerFactory.getLogger(GoogleEventsServiceImpl.class);
     private final RestClient googleRestClient;
 
-    // Lists tasks lists
+    /**
+     * Gets all lists
+     * 
+     * @return {@link ListItemsWrapper}
+     */
     @Override
-    public String getGoogleTasks() {
+    public ListItemsWrapper getAllLists() {
         long start = System.currentTimeMillis();
 
         logger.info("Retrieving google tasks lists");
 
-        String response = googleRestClient.get()
+        ListItemsWrapper response = googleRestClient.get()
             .uri(uriBuilder -> uriBuilder
                 .scheme("https")
                 .host("www.googleapis.com")
-                .pathSegment("users", "@me", "lists")
+                .pathSegment("tasks", "v1", "users", "@me", "lists")
                 .build()
             )
             .retrieve()
-            .body(String.class);
+            .body(ListItemsWrapper.class);
 
         logger.info("[{} ms] - Finished retrieving google tasks lists", System.currentTimeMillis() - start);
         return response;
     }
 
-    // List tasks in a list
+    /**
+     * Gets all tasks in a list specified by list id
+     * 
+     * @param String taskListId
+     * 
+     * @return {@link ListItemsWrapper}
+     */
     @Override
-    public String getGoogleTasks2(String taskListId) {
+    public TaskItemsWrapper getTasksByListId(String taskListId) {
         long start = System.currentTimeMillis();
 
         logger.info("Retrieving google tasks for task list: {}" , taskListId);
         
-        String response = googleRestClient.get()
+        TaskItemsWrapper response = googleRestClient.get()
             .uri(uriBuilder -> uriBuilder
                 .scheme("https")
                 .host("www.googleapis.com")
-                .pathSegment("lists", "{tasklist}", "tasks")
+                .pathSegment("tasks", "v1", "lists", "{tasklist}", "tasks")
                 .build(taskListId)
             )
             .retrieve()
-            .body(String.class);
+            .body(TaskItemsWrapper.class);
 
         logger.info("[{} ms] - Finished retrieving google tasks for task list: {}", System.currentTimeMillis() - start, taskListId);
         return response;

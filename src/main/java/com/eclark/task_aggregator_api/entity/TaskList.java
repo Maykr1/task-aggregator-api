@@ -1,0 +1,18 @@
+package com.eclark.task_aggregator_api.entity;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter @Setter
+@AllArgsConstructor
+@NoArgsConstructor
+public class TaskList {
+    private String id;
+    private String kind;
+    private String etag;
+    private String title;
+    private String updated;
+    private String selfLink;
+}
