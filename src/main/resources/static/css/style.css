@@ -13,7 +13,7 @@ html, body {
     text-decoration-color: #f44; }
 
 .list-group .list-group-item {
-  transition: all 100ms ease-in-out; }
+  transition: all 200ms ease-in-out; }
   .list-group .list-group-item:hover {
     outline: 1px solid #ff7c7c;
     outline-offset: -1px;

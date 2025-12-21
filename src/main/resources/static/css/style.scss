@@ -21,7 +21,7 @@ html, body {
 
 .list-group {
     .list-group-item {
-        transition: all 100ms ease-in-out;
+        transition: all 200ms ease-in-out;
 
         &:hover {
             outline: 1px solid rgb(255, 124, 124);
