@@ -1,3 +1,23 @@
 spring:
   application:
     name: task-aggregator-api
+  
+  profiles:
+    active: ${ACTIVE_PROFILE:local}
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            scope:
+              - openid
+              - email
+              - profile
+              - https://www.googleapis.com/auth/calendar.readonly
+              - https://www.googleapis.com/auth/tasks.readonly
+        provider:
+          google:
+            issuer-uri: https://accounts.google.com

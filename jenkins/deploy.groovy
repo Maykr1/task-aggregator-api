@@ -7,6 +7,7 @@ pipeline {
     environment {
         // --- APP ---
         APP_NAME        = "task-aggregator-api"
+        ACTIVE_PROFILE  = "docker"
 
         // --- DOCKER ---
         COMPOSE_DIR     = '/deploy'
@@ -33,13 +34,19 @@ pipeline {
     }
 
     stages {
+        stage("Pull Secrets") {
+            steps {
+                pullSecrets(env.APP_NAME)
+            }
+        }
+
         stage('Login to Registry') {
             steps {
                 login(env.REG_CRED_ID, env.DOCKER_REG)
             }
         }
 
-        stage('Deploy latest image') {
+        stage('Deploy Image') {
             steps {
                 deployApp(env.IMAGE, env.COMPOSE_DIR, env.IMAGE_TAG, env.APP_NAME)
             }
@@ -62,11 +69,11 @@ pipeline {
 
     post {
         success { 
-            echo "✅ Successfully deployed latest ${APP_NAME} image" 
+            echo "✅ Successfully deployed ${APP_NAME}:${env.IMAGE_TAG} image" 
         }
 
         failure { 
-            echo "❌ Deployment failed for ${APP_NAME}" 
+            echo "❌ Deployment failed for ${APP_NAME}:${env.IMAGE_TAG} image" 
         }
     }
 }

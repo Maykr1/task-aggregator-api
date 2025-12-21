@@ -1,0 +1,24 @@
+* {
+  box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: "Roboto-Mono", monospace; }
+
+.navbar-dark .nav-link {
+  color: #f44; }
+  .navbar-dark .nav-link:hover {
+    text-decoration: underline;
+    text-decoration-color: #f44; }
+
+.list-group .list-group-item {
+  transition: all 200ms ease-in-out; }
+  .list-group .list-group-item:hover {
+    outline: 1px solid #ff7c7c;
+    outline-offset: -1px;
+    background-color: #600000;
+    color: #f44;
+    z-index: 1; }
+
+/*# sourceMappingURL=style.css.map */

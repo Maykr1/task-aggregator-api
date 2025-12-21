@@ -1,0 +1,179 @@
+package com.eclark.task_aggregator_api.util;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.time.DateTimeException;
+import java.util.List;
+
+import org.junit.jupiter.api.Test;
+
+import com.eclark.task_aggregator_api.model.Task;
+import com.eclark.task_aggregator_api.model.TaskList;
+
+public class TaskAggregatorApiUtilTests {
+    @Test
+    void getTaskListIds_mapIds() {
+        TaskList task1 = new TaskList();
+        task1.setId("A");
+        TaskList task2 = new TaskList();
+        task2.setId("B");    
+        TaskList task3 = new TaskList();
+        task3.setId("C");
+
+        List<String> ids = TaskAggregatorApiUtil.getTaskListIds(List.of(task1, task2, task3));
+
+        assertEquals(List.of("A", "B", "C"), ids);
+    }
+
+    @Test
+    void getTaskListIds_empty() {
+        List<String> ids = TaskAggregatorApiUtil.getTaskListIds(List.of());
+        assertNotNull(ids);
+        assertTrue(ids.isEmpty());
+    }
+
+    @Test
+    void getTaskListsIds_null() {
+        assertThrows(
+            IllegalArgumentException.class,
+            () -> TaskAggregatorApiUtil.getTaskListIds(null)            
+        );
+    }
+
+    @Test
+    void formatTime_null() {
+        assertEquals("", TaskAggregatorApiUtil.formatTime(null));
+    }
+
+    @Test
+    void formatTime_empty() {
+        assertEquals("", TaskAggregatorApiUtil.formatTime(""));
+    }
+
+    @Test
+    void formatTime_formatsCorrectly() {
+        String input = "2025-12-20T13:45:00Z";
+        String output = TaskAggregatorApiUtil.formatTime(input);
+
+        assertEquals("Dec 20, 2025", output);
+    }
+
+    @Test
+    void formatTime_invalid() {
+        assertThrows(
+            DateTimeException.class,
+            () -> TaskAggregatorApiUtil.formatTime("not-a-date")
+        );
+    }
+
+    @Test
+    void formatTasks_returnOnlyParents() {
+        Task p1 = new Task();
+        p1.setId("p1");
+        Task p2 = new Task();
+        p2.setId("p2");
+        Task c1 = new Task();
+        c1.setId("c1");
+        c1.setParent("p1");
+        Task c2 = new Task();
+        c2.setId("c2");
+        c2.setParent("p2");
+
+        List<Task> result = TaskAggregatorApiUtil.formatTasks(List.of(p1, p2, c1, c2));
+
+        assertEquals(2, result.size());
+        assertTrue(result.stream().allMatch(t -> t.getParent() == null));
+        assertEquals(List.of("p1", "p2"), result.stream().map(Task::getId).toList());
+    }
+
+    @Test
+    void formatTasks_attachesChildren() {
+        Task p1 = new Task();
+        p1.setId("p1");
+        Task p2 = new Task();
+        p2.setId("p2");
+        Task c1 = new Task();
+        c1.setId("c1");
+        c1.setParent("p1");
+        Task c2 = new Task();
+        c2.setId("c2");
+        c2.setParent("p1");
+        Task c3 = new Task();
+        c3.setId("c3");
+        c3.setParent("p2");
+
+        List<Task> result = TaskAggregatorApiUtil.formatTasks(List.of(p1, p2, c1, c2, c3));
+
+        Task rp1 = result.stream().filter(t -> "p1".equals(t.getId())).findFirst().orElseThrow();
+        Task rp2 = result.stream().filter(t -> "p2".equals(t.getId())).findFirst().orElseThrow();
+
+        assertNotNull(rp1.getChildren());
+        assertNotNull(rp2.getChildren());
+
+        assertEquals(List.of("c1", "c2"), rp1.getChildren().stream().map(Task::getId).sorted().toList());
+        assertEquals(List.of("c3"), rp2.getChildren().stream().map(Task::getId).toList());
+    }
+
+    @Test
+    void formatTasks_childrenReversed() {
+        Task p1 = new Task();
+        p1.setId("p1");
+        Task c1 = new Task();
+        c1.setId("c1");
+        c1.setParent("p1");
+        Task c2 = new Task();
+        c2.setId("c2");
+        c2.setParent("p1");
+        Task c3 = new Task();
+        c3.setId("c3");
+        c3.setParent("p1");
+
+        List<Task> result = TaskAggregatorApiUtil.formatTasks(List.of(p1, c1, c2, c3));
+
+        Task rp1 = result.get(0);
+        List<String> childIds = rp1.getChildren().stream().map(Task::getId).toList();
+
+        assertEquals(List.of("c3", "c2", "c1"), childIds);
+    }
+
+    @Test
+    void formatTasks_parentNoChildren_emptyChildrenList() {
+        Task p1 = new Task();
+        p1.setId("p1");
+
+        List<Task> result = TaskAggregatorApiUtil.formatTasks(List.of(p1));
+
+        assertEquals(1, result.size());
+        assertNotNull(result.get(0).getChildren());
+        assertTrue(result.get(0).getChildren().isEmpty());
+    }
+
+    @Test
+    void formatTasks_orphanChildNotReturned() {
+        Task orphan = new Task();
+        orphan.setId("c1");
+        orphan.setParent("missing-parent");
+
+        List<Task> result = TaskAggregatorApiUtil.formatTasks(List.of(orphan));
+
+        assertTrue(result.isEmpty(), "Only tasks with parent == null should be returned");
+    }
+
+    @Test
+    void formatTasks_empty() {
+        List<Task> result = TaskAggregatorApiUtil.formatTasks(List.of());
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void formatTasks_null_throws() {
+        assertThrows(
+            IllegalArgumentException.class, 
+            () -> TaskAggregatorApiUtil.formatTasks(null)
+        );
+    }
+}
