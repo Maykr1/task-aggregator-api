@@ -55,20 +55,20 @@ pipeline {
 
                         ITEM_ID="$(bw list items --search "${APP_NAME}" --session "$BW_SESSION" | jq -r '.[0].id')"
 
+                        SECRETS_PATH="${WORKSPACE}/.env.secrets"
+
                         if [ -z "$ITEM_ID" ] || [ "$ITEM_ID" = "null" ]; then
                             echo "[INFO] No Bitwarden item found for ${APP_NAME}. Skipping secrets."
-                            rm -f .env.secrets || true
+                            rm -f "$SECRETS_PATH" || true
                             bw lock >/dev/null
                             exit 0
                         fi
 
-                        SECRETS_PATH="${WORKSPACE}/.env.secrets"
-
                         bw get item "$ITEM_ID" --session "$BW_SESSION" | jq -r '.fields[]? | select(.value != null) | (.name + "=" + .value)' > "$SECRETS_PATH"
 
-                        if [ ! -s .env.secrets ]; then
+                        if [ ! -s "$SECRETS_PATH" ]; then
                             echo "[INFO] Bitwarden item found but no custom fields present. Treating as no secrets."
-                            rm -f .env.secrets || true
+                            rm -f "$SECRETS_PATH" || true
                         else
                             echo "[INFO] Wrote secrets file: $SECRETS_PATH"
                         fi

@@ -3,7 +3,7 @@ spring:
     name: task-aggregator-api
   
   profiles:
-    active: "${ACTIVE_PROFILE:local}"
+    active: ${ACTIVE_PROFILE:local}
 
   security:
     oauth2:
