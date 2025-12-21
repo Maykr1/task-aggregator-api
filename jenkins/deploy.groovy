@@ -62,9 +62,10 @@ pipeline {
                             exit 0
                         fi
 
-                        SECRETS_PATH="${COMPOSE_DIR}/.env.secrets"
+                        SECRETS_PATH="${WORKSPACE}/.env.secrets"
 
                         bw get item "$ITEM_ID" --session "$BW_SESSION" | jq -r '.fields[]? | select(.value != null) | (.name + "=" + .value)' > "$SECRETS_PATH"
+
                         if [ ! -s .env.secrets ]; then
                             echo "[INFO] Bitwarden item found but no custom fields present. Treating as no secrets."
                             rm -f .env.secrets || true
