@@ -43,6 +43,7 @@ pipeline {
                     string(credentialsId: 'bitwarden-master-password', variable: 'BW_MASTER_PASSWORD')
                 ]) {
                     sh '''
+                        bw logout >/dev/null 2>&1 || true
                         bw config server "$BW_URL" >/dev/null
 
                         export BW_CLIENTID BW_CLIENTSECRET
