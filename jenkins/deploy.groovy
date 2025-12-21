@@ -53,7 +53,7 @@ pipeline {
                         export BW_SESSION
                         bw sync --session "$BW_SESSION" >/dev/null
 
-                        ITEM_ID="$(bw list items --search "${APP_NAME}" | jq -r '.[0].id')"
+                        ITEM_ID="$(bw list items --search "${APP_NAME}" --session "$BW_SESSION" | jq -r '.[0].id')"
 
                         if [ -z "$ITEM_ID" ] || [ "$ITEM_ID" = "null" ]; then
                             echo "[INFO] No Bitwarden item found for ${APP_NAME}. Skipping secrets."
@@ -62,7 +62,7 @@ pipeline {
                             exit 0
                         fi
 
-                        bw get item "$ITEM_ID" --session "$BW_SESSION" | jq -r '.fields[]? | select(.value != null) | "\(.name)=\(.value)"' > .env.secrets
+                        bw get item "$ITEM_ID" --session "$BW_SESSION" | jq -r '.fields[]? | select(.value != null) | (.name + "=" + .value)' > .env.secrets
 
                         if [ ! -s .env.secrets ]; then
                             echo "[INFO] Bitwarden item found but no custom fields present. Treating as no secrets."
