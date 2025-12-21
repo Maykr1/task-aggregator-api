@@ -49,7 +49,9 @@ pipeline {
                         export BW_CLIENTID BW_CLIENTSECRET
                         bw login --apikey >/dev/null
 
-                        export BW_SESSION="$(bw unlock "$BW_MASTER_PASSWORD" --raw)"
+                        BW_SESSION="$(bw unlock "$BW_MASTER_PASSWORD" --raw)"
+                        export BW_SESSION
+                        bw sync --session "$BW_SESSION" >/dev/null
 
                         ITEM_ID="$(bw list items --search "${APP_NAME}" | jq -r '.[0].id')"
 
@@ -60,9 +62,7 @@ pipeline {
                             exit 0
                         fi
 
-                        bw get item "$ITEM_ID" --session "$BW_SESSION" \
-                            | jq -r '.fields[]? | select(.value != null) | "\(.name)=\(.value)"' \
-                            > .env.secrets
+                        bw get item "$ITEM_ID" --session "$BW_SESSION" | jq -r '.fields[]? | select(.value != null) | "\(.name)=\(.value)"' > .env.secrets
 
                         if [ ! -s .env.secrets ]; then
                             echo "[INFO] Bitwarden item found but no custom fields present. Treating as no secrets."
