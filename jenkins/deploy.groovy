@@ -60,12 +60,12 @@ pipeline {
                             exit 0
                         fi
 
-                        NOTE="$(bw get item "$ITEM_ID" | jq -r '.notes')"
-                        
-                        echo "$NOTE" | grep -E '^[A-Z0-9_]+=' > .env.secrets || true
+                        bw get item "$ITEM_ID" --session "$BW_SESSION" \
+                            | jq -r '.fields[]? | select(.value != null) | "\(.name)=\(.value)"' \
+                            > .env.secrets
 
                         if [ ! -s .env.secrets ]; then
-                            echo "[INFO] Bitwarden item found but no KEY=VALUE lines in notes. Treating as no secrets."
+                            echo "[INFO] Bitwarden item found but no custom fields present. Treating as no secrets."
                             rm -f .env.secrets || true
                         else
                             echo "[INFO] Wrote secrets file: .env.secrets"
