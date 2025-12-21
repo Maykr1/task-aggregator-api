@@ -1,5 +1,7 @@
 package com.eclark.task_aggregator_api.controller;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -9,8 +11,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.eclark.task_aggregator_api.model.ListItemsWrapper;
-import com.eclark.task_aggregator_api.model.TaskItemsWrapper;
+import com.eclark.task_aggregator_api.model.Task;
+import com.eclark.task_aggregator_api.model.TaskList;
 import com.eclark.task_aggregator_api.service.GoogleEventsService;
 import com.eclark.task_aggregator_api.service.GoogleTasksService;
 
@@ -25,22 +27,22 @@ public class TaskAggregatorController {
     private static final Logger logger = LoggerFactory.getLogger(TaskAggregatorController.class);
 
     @GetMapping("/tasks")
-    public ResponseEntity<ListItemsWrapper> getAllLists() {
+    public ResponseEntity<List<TaskList>> getAllLists() {
         long start = System.currentTimeMillis();
         logger.info("Starting to retrieve Google Tasks");
 
-        ListItemsWrapper response = googleTasksService.getAllLists();
+        List<TaskList> response = googleTasksService.getAllLists();
 
         logger.info("[{} ms] - Finished getting all Google Tasks", System.currentTimeMillis() - start);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/tasks/{id}")
-    public ResponseEntity<TaskItemsWrapper> getTasksByListId(@PathVariable("id") String taskListId) {
+    public ResponseEntity<List<Task>> getTasksByListId(@PathVariable("id") String taskListId) {
         long start = System.currentTimeMillis();
         logger.info("Starting to retrieve Google Tasks for list: {}", taskListId);
 
-        TaskItemsWrapper response = googleTasksService.getTasksByListId(taskListId);
+        List<Task> response = googleTasksService.getTasksByListId(taskListId);
 
         logger.info("[{} ms] - Finished getting all Google Tasks for list: {}", System.currentTimeMillis() - start, taskListId);
         return new ResponseEntity<>(response, HttpStatus.OK);

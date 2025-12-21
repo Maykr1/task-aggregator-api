@@ -30,8 +30,6 @@ public class GoogleEventsServiceImpl implements GoogleEventsService {
 
         String response = googleRestClient.get()
             .uri(uriBuilder -> uriBuilder
-                .scheme("https")
-                .host("www.googleapis.com")
                 .path("/calendar/v3/calnedars/{calendarId}/events")
                 .queryParam("timeMin", beginning.toString())
                 .queryParam("timeMax", end.toString())

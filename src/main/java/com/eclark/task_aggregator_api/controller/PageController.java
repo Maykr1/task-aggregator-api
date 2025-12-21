@@ -2,6 +2,7 @@ package com.eclark.task_aggregator_api.controller;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,11 +11,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import com.eclark.task_aggregator_api.model.ListItemsWrapper;
 import com.eclark.task_aggregator_api.model.Task;
-import com.eclark.task_aggregator_api.model.TaskItemsWrapper;
 import com.eclark.task_aggregator_api.model.TaskList;
 import com.eclark.task_aggregator_api.service.GoogleTasksService;
+import com.eclark.task_aggregator_api.util.TaskAggregatorApiUtil;
 
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
@@ -28,29 +28,22 @@ public class PageController {
 
     @GetMapping("/")
     public String home(Model model) {
-        ListItemsWrapper listsWrapper = googleTasksService.getAllLists();
-        List<TaskList> taskLists = listsWrapper.getTaskLists();
-        List<String> taskListIds = taskLists.stream()
-            .map(TaskList::getId)
-            .toList();
+        // Retrieve Lists
+        List<TaskList> taskLists = googleTasksService.getAllLists();
+        List<String> taskListIds = TaskAggregatorApiUtil.getTaskListIds(taskLists);
 
-        HashMap<String, List<Task>> map = new HashMap<>();
+        // Create HashMap of:
+        // <List Id, List<Tasks>>
+        Map<String, List<Task>> map = new HashMap<>();
         for (String id : taskListIds) {
-            TaskItemsWrapper tasksWrapper = googleTasksService.getTasksByListId(id);
-            List<Task> tasks = tasksWrapper.getTasks();
+            List<Task> tasks = googleTasksService.getTasksByListId(id);
 
             map.put(id, tasks);
         }
 
         model.addAttribute("taskLists", taskLists);
         model.addAttribute("tasksMap", map);
-
-        for (TaskList item : taskLists) {
-            logger.info("Task List : {}", item.getTitle());
-        }
-
-        logger.info("Example item: {}", map.get(taskListIds.get(0)).toString());
-
+        
         return "index";
     }
 

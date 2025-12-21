@@ -51,6 +51,7 @@ public class RestClientConfig {
 
         return RestClient.builder()
             .requestInterceptor(interceptor)
+            .baseUrl("https://www.googleapis.com")
             .build();
     }
 }

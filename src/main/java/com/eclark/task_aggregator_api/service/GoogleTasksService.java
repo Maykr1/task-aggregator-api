@@ -1,9 +1,11 @@
 package com.eclark.task_aggregator_api.service;
 
-import com.eclark.task_aggregator_api.model.ListItemsWrapper;
-import com.eclark.task_aggregator_api.model.TaskItemsWrapper;
+import java.util.List;
+
+import com.eclark.task_aggregator_api.model.Task;
+import com.eclark.task_aggregator_api.model.TaskList;
 
 public interface GoogleTasksService {
-    public ListItemsWrapper getAllLists();
-    public TaskItemsWrapper getTasksByListId(String taskListId);
+    public List<TaskList> getAllLists();
+    public List<Task> getTasksByListId(String taskListId);
 }
