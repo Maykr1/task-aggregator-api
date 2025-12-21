@@ -8,7 +8,6 @@ pipeline {
         // --- APP ---
         APP_NAME        = "task-aggregator-api"
         ACTIVE_PROFILE  = "docker"
-        ENV_FILE        = "task-aggregator-api env"
 
         // --- DOCKER ---
         COMPOSE_DIR     = '/deploy'
