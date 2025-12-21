@@ -9,7 +9,6 @@ pipeline {
     environment {
         // --- APP ---
         APP_NAME            = "task-aggregator-api"
-        ACTIVE_PROFILE      = "docker"
 
         // --- MAVEN ---
         NEXUS               = credentials('nexus-deploy')
