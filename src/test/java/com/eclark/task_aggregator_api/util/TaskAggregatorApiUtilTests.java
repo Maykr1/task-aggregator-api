@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.DateTimeException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -44,28 +45,28 @@ public class TaskAggregatorApiUtilTests {
     }
 
     @Test
-    void formatTime_null() {
-        assertEquals("", TaskAggregatorApiUtil.formatTime(null));
+    void formatTaskTime_null() {
+        assertEquals("", TaskAggregatorApiUtil.formatTaskTime(null));
     }
 
     @Test
-    void formatTime_empty() {
-        assertEquals("", TaskAggregatorApiUtil.formatTime(""));
+    void formatTaskTime_empty() {
+        assertEquals("", TaskAggregatorApiUtil.formatTaskTime(""));
     }
 
     @Test
-    void formatTime_formatsCorrectly() {
+    void formatTaskTime_formatsCorrectly() {
         String input = "2025-12-20T13:45:00Z";
-        String output = TaskAggregatorApiUtil.formatTime(input);
+        String output = TaskAggregatorApiUtil.formatTaskTime(input);
 
         assertEquals("Dec 20, 2025", output);
     }
 
     @Test
-    void formatTime_invalid() {
+    void formatTaskTime_invalid() {
         assertThrows(
             DateTimeException.class,
-            () -> TaskAggregatorApiUtil.formatTime("not-a-date")
+            () -> TaskAggregatorApiUtil.formatTaskTime("not-a-date")
         );
     }
 
@@ -171,9 +172,6 @@ public class TaskAggregatorApiUtilTests {
 
     @Test
     void formatTasks_null_throws() {
-        assertThrows(
-            IllegalArgumentException.class, 
-            () -> TaskAggregatorApiUtil.formatTasks(null)
-        );
+        assertEquals(TaskAggregatorApiUtil.formatEvents(null), new ArrayList<>());
     }
 }

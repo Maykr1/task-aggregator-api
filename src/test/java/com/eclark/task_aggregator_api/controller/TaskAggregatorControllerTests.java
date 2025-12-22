@@ -63,7 +63,7 @@ public class TaskAggregatorControllerTests {
     public void getAllLists() throws Exception {
         when(googleTasksService.getAllLists()).thenReturn(List.of(taskList1, taskList2));
         
-        mockMvc.perform(get("/api/tasks")
+        mockMvc.perform(get("/api/tasks/lists")
                 .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))

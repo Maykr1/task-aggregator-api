@@ -4,15 +4,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import com.eclark.task_aggregator_api.model.googleCalendar.CalendarEvent;
 import com.eclark.task_aggregator_api.model.googleTasks.Task;
 import com.eclark.task_aggregator_api.model.googleTasks.TaskList;
+import com.eclark.task_aggregator_api.service.GoogleEventsService;
 import com.eclark.task_aggregator_api.service.GoogleTasksService;
 import com.eclark.task_aggregator_api.util.TaskAggregatorApiUtil;
 
@@ -23,27 +23,32 @@ import lombok.RequiredArgsConstructor;
 @Controller
 @RequiredArgsConstructor
 public class PageController {
-    private static final Logger logger = LoggerFactory.getLogger(PageController.class);
     private final GoogleTasksService googleTasksService;
+    private final GoogleEventsService googleEventsService;
 
     @GetMapping("/")
     public String home(Model model) {
         // Retrieve Lists
         List<TaskList> taskLists = googleTasksService.getAllLists();
-        List<String> taskListIds = TaskAggregatorApiUtil.getTaskListIds(taskLists);
 
         // Create HashMap of:
         // <List Id, List<Tasks>>
         Map<String, List<Task>> map = new HashMap<>();
-        for (String id : taskListIds) {
+        for (String id : TaskAggregatorApiUtil.getTaskListIds(taskLists)) {
             List<Task> tasks = googleTasksService.getTasksByListId(id);
 
             map.put(id, tasks);
         }
 
+        // Retrieve Todays & Upcoming Calendar Events
+        List<CalendarEvent> todaysCalendarEvents = googleEventsService.getTodaysEvents();
+        List<CalendarEvent> upcomingCalendarEvents = googleEventsService.getUpcomingCalendarEvents();
+        
         model.addAttribute("taskLists", taskLists);
         model.addAttribute("tasksMap", map);
-        
+        model.addAttribute("todaysCalendarEvents", todaysCalendarEvents);
+        model.addAttribute("upcomingCalendarEvents", upcomingCalendarEvents);
+
         return "index";
     }
 

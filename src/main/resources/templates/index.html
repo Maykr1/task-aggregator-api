@@ -30,10 +30,16 @@
     </nav>
 
     <div class="container mt-4">
+        <div class="row">
+            <div class="col">
+                <h1> Google Tasks </h1>
+            </div>
+        </div>
+
         <!-- Google Tasks Row -->
         <div class="row">
             <div class="col-md-4" th:each="list : ${taskLists}">
-                <div class="card mb-4"> <!-- h-100 -->
+                <div class="card mb-4">
                     <div class="card-header fw-bolder" th:text="${list.title}"></div>
 
                     <!-- Tasks List -->
@@ -44,7 +50,7 @@
                                 <div class="fw-bold" th:text="${parent.title}"></div>
                                 <div class="small text-muted" th:if="${parent.notes != null}" th:text="${parent.notes}"></div>
                                 <div class="small text-muted fw-semibold" th:if="${parent.due != null}" 
-                                    th:text="${T(com.eclark.task_aggregator_api.util.TaskAggregatorApiUtil).formatTime(parent.due)}"></div>
+                                    th:text="${T(com.eclark.task_aggregator_api.util.TaskAggregatorApiUtil).formatTaskTime(parent.due)}"></div>
                             </a>
                             
                             
@@ -55,7 +61,7 @@
                                         <div class="fw-medium" th:text="${child.title}"></div>
                                         <div class="small text-muted" th:if="${child.notes != null}" th:text="${child.notes}"></div>
                                         <div class="small text-muted fw-semibold" th:if="${child.due != null}" 
-                                            th:text="${T(com.eclark.task_aggregator_api.util.TaskAggregatorApiUtil).formatTime(child.due)}"></div>
+                                            th:text="${T(com.eclark.task_aggregator_api.util.TaskAggregatorApiUtil).formatTaskTime(child.due)}"></div>
                                     </a>
                                 </li>
                             </ul>
@@ -66,9 +72,52 @@
                     </ul>
                 </div>
             </div>
-
         </div>
 
+        <div class="row">
+            <div class="col">
+                <h1> Google Calendar </h1>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-header fw-bolder"> Today </div>
+
+                    <!-- Events List -->
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item" th:each="event : ${todaysCalendarEvents}">
+                            <a th:href="${event.htmlLink}" class="text-decoration-none text-reset">
+                                <div class="fw-medium" th:text="${event.title}"></div>
+                                <div class="small text-muted fw-semibold" th:if="${event.start.dateTime != null}" 
+                                    th:text="${T(com.eclark.task_aggregator_api.util.TaskAggregatorApiUtil).formatEventTimeWithZone(event.start.dateTime)}"></div>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-header fw-bolder"> Upcoming </div>
+
+                    <!-- Events List -->
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item" th:each="event : ${upcomingCalendarEvents}">
+                            <a th:href="${event.htmlLink}" class="text-decoration-none text-reset">
+                                <div class="fw-medium" th:text="${event.title}"></div>
+                                <div class="small text-muted fw-semibold" th:if="${event.start.dateTime != null}" 
+                                    th:text="${T(com.eclark.task_aggregator_api.util.TaskAggregatorApiUtil).formatEventTimeWithZone(event.start.dateTime)}"></div>
+                                <div class="small text-muted fw-semibold" th:if="${event.start.date != null}" 
+                                    th:text="${T(com.eclark.task_aggregator_api.util.TaskAggregatorApiUtil).formatEventTimeWithZone(event.start.date)}"></div>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
     </div>
 </body>
 </html>

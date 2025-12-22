@@ -11,12 +11,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.eclark.task_aggregator_api.model.googleCalendar.CalendarEvent;
 import com.eclark.task_aggregator_api.model.googleTasks.Task;
 import com.eclark.task_aggregator_api.model.googleTasks.TaskList;
 import com.eclark.task_aggregator_api.service.GoogleEventsService;
 import com.eclark.task_aggregator_api.service.GoogleTasksService;
 
 import lombok.RequiredArgsConstructor;
+
 
 @RestController
 @RequestMapping("/api")
@@ -26,7 +28,7 @@ public class TaskAggregatorController {
     private final GoogleEventsService googleEventsService;
     private static final Logger logger = LoggerFactory.getLogger(TaskAggregatorController.class);
 
-    @GetMapping("/tasks")
+    @GetMapping("/tasks/lists")
     public ResponseEntity<List<TaskList>> getAllLists() {
         long start = System.currentTimeMillis();
         logger.info("Starting to retrieve Google Tasks");
@@ -48,14 +50,25 @@ public class TaskAggregatorController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/calendars")
-    public ResponseEntity<Object> getGoogleCalendars() {
+    @GetMapping("/calendars/upcoming")
+    public ResponseEntity<List<CalendarEvent>> getUpcomingEvents() {
         long start = System.currentTimeMillis();
-        logger.info("Starting to retrieve all Google Calendars");
+        logger.info("Starting to retrieve all upcoming Google Events");
 
-        Object response = googleEventsService.getTodaysEvent();
+        List<CalendarEvent> response = googleEventsService.getUpcomingCalendarEvents();
 
-        logger.info("[{} ms] - Finished getting all Google Events for today", System.currentTimeMillis() - start);
+        logger.info("[{} ms] - Finished getting all upcoming Google Events", System.currentTimeMillis() - start);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/calendars/today")
+    public ResponseEntity<List<CalendarEvent>> getTodaysEvents() {
+        long start = System.currentTimeMillis();
+        logger.info("Starting to retrieve all upcoming Google Events");
+
+        List<CalendarEvent> response = googleEventsService.getTodaysEvents();
+
+        logger.info("[{} ms] - Finished getting all upcoming Google Events", System.currentTimeMillis() - start);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
