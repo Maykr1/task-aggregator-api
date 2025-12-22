@@ -30,16 +30,20 @@ public class GoogleTasksServiceImpl implements GoogleTasksService {
     @Override
     public List<TaskList> getAllLists() {
         long start = System.currentTimeMillis();
-
+        ListItemsWrapper response = null;
         logger.info("Retrieving google tasks lists");
-
-        ListItemsWrapper response = googleRestClient.get()
-            .uri(uriBuilder -> uriBuilder
-                .pathSegment("tasks", "v1", "users", "@me", "lists")
-                .build()
-            )
-            .retrieve()
-            .body(ListItemsWrapper.class);
+        
+        try {
+            response = googleRestClient.get()
+                .uri(uriBuilder -> uriBuilder
+                    .pathSegment("tasks", "v1", "users", "@me", "lists")
+                    .build()
+                )
+                .retrieve()
+                .body(ListItemsWrapper.class);
+        } catch (Exception e) {
+            logger.error("[UnexpectedException] - Unexpected Error occured: {}", e.getMessage(), e);
+        }
 
         List<TaskList> taskLists = response.getTaskLists();
 
@@ -56,17 +60,21 @@ public class GoogleTasksServiceImpl implements GoogleTasksService {
      */
     @Override
     public List<Task> getTasksByListId(String taskListId) {
-        long start = System.currentTimeMillis();
-
+        long start                  = System.currentTimeMillis();
+        TaskItemsWrapper response   = null;
         logger.info("Retrieving google tasks for task list: {}" , taskListId);
         
-        TaskItemsWrapper response = googleRestClient.get()
-            .uri(uriBuilder -> uriBuilder
-                .pathSegment("tasks", "v1", "lists", "{tasklist}", "tasks")
-                .build(taskListId)
-            )
-            .retrieve()
-            .body(TaskItemsWrapper.class);
+        try {
+            response = googleRestClient.get()
+                .uri(uriBuilder -> uriBuilder
+                    .pathSegment("tasks", "v1", "lists", "{tasklist}", "tasks")
+                    .build(taskListId)
+                )
+                .retrieve()
+                .body(TaskItemsWrapper.class);
+        } catch (Exception e) {
+            logger.error("[UnexpectedException] - Unexpected Error occured: {}", e.getMessage(), e);
+        }
 
         List<Task> tasks = TaskAggregatorApiUtil.formatTasks(response.getTasks());
 

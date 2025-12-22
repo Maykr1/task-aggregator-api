@@ -26,25 +26,29 @@ public class GoogleEventsServiceImpl implements GoogleEventsService {
 
     @Override
     public List<CalendarEvent> getUpcomingCalendarEvents() {
-        long start = System.currentTimeMillis();
-
+        long start          = System.currentTimeMillis();
         Integer maxResults  = 10;
         Instant now         = LocalDate.now(ZoneId.systemDefault()).plusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant();
+        CalendarEventsWrapper response = null;
 
         logger.info("Retrieving upcoming {} Google Calendar Events starting on: {}", maxResults, now);
 
-        CalendarEventsWrapper response = googleRestClient.get()
-            .uri(uriBuilder -> uriBuilder
-                .pathSegment("calendar", "v3", "calendars", "{calendarId}", "events")
-                .queryParam("maxResults", maxResults)
-                .queryParam("orderBy", TaskAggregatorApiConstants.ORDER_BY_START_TIME)
-                .queryParam("singleEvents", true)
-                .queryParam("timeMin", now.toString())
-                .build(TaskAggregatorApiConstants.PRIMARY_CALENDAR_NAME)
-            )
-            .retrieve()
-            .body(CalendarEventsWrapper.class);
-
+        try {
+            response = googleRestClient.get()
+                .uri(uriBuilder -> uriBuilder
+                    .pathSegment("calendar", "v3", "calendars", "{calendarId}", "events")
+                    .queryParam("maxResults", maxResults)
+                    .queryParam("orderBy", TaskAggregatorApiConstants.ORDER_BY_START_TIME)
+                    .queryParam("singleEvents", true)
+                    .queryParam("timeMin", now.toString())
+                    .build(TaskAggregatorApiConstants.PRIMARY_CALENDAR_NAME)
+                )
+                .retrieve()
+                .body(CalendarEventsWrapper.class);
+        } catch (Exception e) {
+            logger.error("[UnexpectedException] - Unexpected Error occured: {}", e.getMessage(), e);
+        }
+        
         logger.info("First Item: {}", response.getCalendarEvents().getFirst().getTitle());
 
         List<CalendarEvent> calendarEvents = TaskAggregatorApiUtil.formatEvents(response.getCalendarEvents());
@@ -55,24 +59,28 @@ public class GoogleEventsServiceImpl implements GoogleEventsService {
 
     @Override
     public List<CalendarEvent> getTodaysEvents() {
-        long start = System.currentTimeMillis();
-
+        long start          = System.currentTimeMillis();
         Instant beginning   = LocalDate.now(ZoneId.systemDefault()).atStartOfDay(ZoneId.systemDefault()).toInstant();
         Instant end         = LocalDate.now(ZoneId.systemDefault()).plusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant();
+        CalendarEventsWrapper response = null;
 
         logger.info("Retrieving today's Google Calendar Events between: {} and {}", beginning, end);
 
-        CalendarEventsWrapper response = googleRestClient.get()
-            .uri(uriBuilder -> uriBuilder
-                .pathSegment("calendar", "v3", "calendars", "{calendarId}", "events")
-                .queryParam("timeMin", beginning.toString())
-                .queryParam("timeMax", end.toString())
-                .queryParam("singleEvents", true)
-                .queryParam("orderBy", TaskAggregatorApiConstants.ORDER_BY_START_TIME)
-                .build(TaskAggregatorApiConstants.PRIMARY_CALENDAR_NAME)
-            )
-            .retrieve()
-            .body(CalendarEventsWrapper.class);
+        try {
+            response = googleRestClient.get()
+                .uri(uriBuilder -> uriBuilder
+                    .pathSegment("calendar", "v3", "calendars", "{calendarId}", "events")
+                    .queryParam("timeMin", beginning.toString())
+                    .queryParam("timeMax", end.toString())
+                    .queryParam("singleEvents", true)
+                    .queryParam("orderBy", TaskAggregatorApiConstants.ORDER_BY_START_TIME)
+                    .build(TaskAggregatorApiConstants.PRIMARY_CALENDAR_NAME)
+                )
+                .retrieve()
+                .body(CalendarEventsWrapper.class);
+        } catch (Exception e) {
+            logger.error("[UnexpectedException] - Unexpected Error occured: {}", e.getMessage(), e);
+        }
 
         List<CalendarEvent> calendarEvents = TaskAggregatorApiUtil.formatEvents(response.getCalendarEvents());
 
