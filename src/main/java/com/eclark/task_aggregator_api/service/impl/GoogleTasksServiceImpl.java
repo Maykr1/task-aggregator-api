@@ -7,10 +7,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
-import com.eclark.task_aggregator_api.model.ListItemsWrapper;
-import com.eclark.task_aggregator_api.model.Task;
-import com.eclark.task_aggregator_api.model.TaskItemsWrapper;
-import com.eclark.task_aggregator_api.model.TaskList;
+import com.eclark.task_aggregator_api.model.googleTasks.ListItemsWrapper;
+import com.eclark.task_aggregator_api.model.googleTasks.Task;
+import com.eclark.task_aggregator_api.model.googleTasks.TaskItemsWrapper;
+import com.eclark.task_aggregator_api.model.googleTasks.TaskList;
 import com.eclark.task_aggregator_api.service.GoogleTasksService;
 import com.eclark.task_aggregator_api.util.TaskAggregatorApiUtil;
 

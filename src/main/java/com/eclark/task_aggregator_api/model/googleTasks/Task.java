@@ -1,4 +1,4 @@
-package com.eclark.task_aggregator_api.model;
+package com.eclark.task_aggregator_api.model.googleTasks;
 
 import java.util.List;
 

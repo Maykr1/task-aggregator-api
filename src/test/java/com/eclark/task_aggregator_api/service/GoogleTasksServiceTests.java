@@ -15,8 +15,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.springframework.web.client.RestClient;
 
-import com.eclark.task_aggregator_api.model.Task;
-import com.eclark.task_aggregator_api.model.TaskList;
+import com.eclark.task_aggregator_api.model.googleTasks.Task;
+import com.eclark.task_aggregator_api.model.googleTasks.TaskList;
 import com.eclark.task_aggregator_api.service.impl.GoogleTasksServiceImpl;
 import com.eclark.task_aggregator_api.util.TaskAggregatorApiUtil;
 

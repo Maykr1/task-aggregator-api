@@ -10,8 +10,8 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import com.eclark.task_aggregator_api.model.Task;
-import com.eclark.task_aggregator_api.model.TaskList;
+import com.eclark.task_aggregator_api.model.googleTasks.Task;
+import com.eclark.task_aggregator_api.model.googleTasks.TaskList;
 
 public class TaskAggregatorApiUtilTests {
     @Test

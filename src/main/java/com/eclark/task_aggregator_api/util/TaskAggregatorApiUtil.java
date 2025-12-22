@@ -5,8 +5,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.eclark.task_aggregator_api.model.Task;
-import com.eclark.task_aggregator_api.model.TaskList;
+import com.eclark.task_aggregator_api.model.googleTasks.Task;
+import com.eclark.task_aggregator_api.model.googleTasks.TaskList;
 
 public class TaskAggregatorApiUtil {
     public static List<String> getTaskListIds(List<TaskList> taskLists) {

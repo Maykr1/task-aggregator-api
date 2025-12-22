@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.eclark.task_aggregator_api.model.Task;
-import com.eclark.task_aggregator_api.model.TaskList;
+import com.eclark.task_aggregator_api.model.googleTasks.Task;
+import com.eclark.task_aggregator_api.model.googleTasks.TaskList;
 import com.eclark.task_aggregator_api.service.GoogleEventsService;
 import com.eclark.task_aggregator_api.service.GoogleTasksService;
 
@@ -48,10 +48,10 @@ public class TaskAggregatorController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/events")
-    public ResponseEntity<Object> getTodaysEvents() {
+    @GetMapping("/calendars")
+    public ResponseEntity<Object> getGoogleCalendars() {
         long start = System.currentTimeMillis();
-        logger.info("Starting to retrieve all Google Events for today");
+        logger.info("Starting to retrieve all Google Calendars");
 
         Object response = googleEventsService.getTodaysEvent();
 

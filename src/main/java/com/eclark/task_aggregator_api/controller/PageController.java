@@ -11,8 +11,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import com.eclark.task_aggregator_api.model.Task;
-import com.eclark.task_aggregator_api.model.TaskList;
+import com.eclark.task_aggregator_api.model.googleTasks.Task;
+import com.eclark.task_aggregator_api.model.googleTasks.TaskList;
 import com.eclark.task_aggregator_api.service.GoogleTasksService;
 import com.eclark.task_aggregator_api.util.TaskAggregatorApiUtil;
 
