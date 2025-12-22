@@ -14,13 +14,10 @@ import lombok.ToString;
 @NoArgsConstructor
 public class Task {
     private String id;
-    private String kind;
-    private String etag;
     private String title;
     private String updated;
     private String selfLink;
     private String parent;
-    private String position;
     private String notes;
     private String status;
     private String due;

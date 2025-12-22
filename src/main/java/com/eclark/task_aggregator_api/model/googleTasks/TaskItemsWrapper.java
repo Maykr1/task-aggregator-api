@@ -15,9 +15,6 @@ import lombok.Getter;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TaskItemsWrapper {
-    private String kind;
-    private String etag;
-
     @JsonProperty("items")
     private List<Task> tasks;
 }

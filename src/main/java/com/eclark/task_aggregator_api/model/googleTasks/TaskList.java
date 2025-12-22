@@ -11,8 +11,6 @@ import lombok.ToString;
 @NoArgsConstructor
 public class TaskList {
     private String id;
-    private String kind;
-    private String etag;
     private String title;
     private String updated;
     private String selfLink;
