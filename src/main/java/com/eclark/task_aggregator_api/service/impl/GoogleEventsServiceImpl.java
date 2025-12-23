@@ -48,8 +48,6 @@ public class GoogleEventsServiceImpl implements GoogleEventsService {
         } catch (Exception e) {
             logger.error("[UnexpectedException] - Unexpected Error occured: {}", e.getMessage(), e);
         }
-        
-        logger.info("First Item: {}", response.getCalendarEvents().getFirst().getTitle());
 
         List<CalendarEvent> calendarEvents = TaskAggregatorApiUtil.formatEvents(response.getCalendarEvents());
 

@@ -1,16 +1,23 @@
 package com.eclark.task_aggregator_api.util;
 
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertSame;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.DateTimeException;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+import com.eclark.task_aggregator_api.model.googleCalendar.CalendarEvent;
 import com.eclark.task_aggregator_api.model.googleTasks.Task;
 import com.eclark.task_aggregator_api.model.googleTasks.TaskList;
 
@@ -166,6 +173,7 @@ public class TaskAggregatorApiUtilTests {
     @Test
     void formatTasks_empty() {
         List<Task> result = TaskAggregatorApiUtil.formatTasks(List.of());
+
         assertNotNull(result);
         assertTrue(result.isEmpty());
     }
@@ -173,5 +181,75 @@ public class TaskAggregatorApiUtilTests {
     @Test
     void formatTasks_null_throws() {
         assertEquals(TaskAggregatorApiUtil.formatEvents(null), new ArrayList<>());
+    }
+
+    @Test
+    void formatEvents_nullInput_returnsEmptyList() {
+        List<CalendarEvent> result = TaskAggregatorApiUtil.formatEvents(null);
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void formatEvents_emptyList_returnsEmptyList() {
+        List<CalendarEvent> result = TaskAggregatorApiUtil.formatEvents(List.of());
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void formatEvents_returnsShallowCopy() {
+        CalendarEvent e1 = new CalendarEvent();
+        e1.setId("1");
+
+        CalendarEvent e2 = new CalendarEvent();
+        e2.setId("2");
+
+        List<CalendarEvent> original = List.of(e1, e2);
+        List<CalendarEvent> result = TaskAggregatorApiUtil.formatEvents(original);
+
+        assertEquals(2, result.size());
+        assertSame(e1, result.get(0));
+        assertSame(e2, result.get(1));
+        assertNotSame(original, result);
+    }
+
+    @Test
+    void formatEventTimeWithZone_nullInput_returnsEmptyString() {
+        assertEquals("", TaskAggregatorApiUtil.formatEventTimeWithZone(null));
+    }
+
+    @Test
+    void formatEventTimeWithZone_emptyInput_returnsEmptyString() {
+        assertEquals("", TaskAggregatorApiUtil.formatEventTimeWithZone(""));
+    }
+
+    @Test
+    void formatEventTimeWithZone_isoDateTime_convertsToEasternTime() {
+        String input = "2025-12-22T10:00:00-05:00";
+        String result = TaskAggregatorApiUtil.formatEventTimeWithZone(input);
+        OffsetDateTime odt = OffsetDateTime.parse(input);
+        ZonedDateTime zdt = odt.atZoneSameInstant(ZoneId.of("America/New_York"));
+        String expected = zdt.format(DateTimeFormatter.ofPattern("MMM d, yyyy h:mm a"));
+
+        assertEquals(expected, result);
+    }
+
+    @Test
+    void formatEventTimeWithZone_localDate_formatsDateOnly() {
+        String input = "2026-05-07";
+        String result = TaskAggregatorApiUtil.formatEventTimeWithZone(input);
+
+        assertEquals("May 7, 2026", result);
+    }
+
+    @Test
+    void formatEventTimeWithZone_isoDateTime_midnightEdgeCase() {
+        String input = "2025-01-01T00:00:00-05:00";
+        String result = TaskAggregatorApiUtil.formatEventTimeWithZone(input);
+
+        assertEquals("Jan 1, 2025 12:00 AM", result);
     }
 }

@@ -29,7 +29,7 @@ public class GoogleTasksServiceTests {
     private GoogleTasksServiceImpl googleTasksServiceImpl;
 
     @BeforeEach
-    void setUp() throws Exception {
+    public void setUp() throws Exception {
         mockWebServer = new MockWebServer();
         mockWebServer.start();
 
@@ -42,12 +42,12 @@ public class GoogleTasksServiceTests {
     }
 
     @AfterEach
-    void teardown() throws Exception {
+    public void teardown() throws Exception {
         mockWebServer.shutdown();
     }
 
     @Test
-    void getAllLists() throws Exception {
+    public void getAllLists() throws Exception {
         mockWebServer.enqueue(new MockResponse()
             .setResponseCode(200)
             .addHeader("Content-Type", "application/json")
@@ -72,7 +72,7 @@ public class GoogleTasksServiceTests {
     }
 
     @Test
-    void getTasksById() throws Exception {
+    public void getTasksById() throws Exception {
         mockWebServer.enqueue(new MockResponse()
             .setResponseCode(200)
             .addHeader("Content-Type", "application/json")
@@ -106,7 +106,7 @@ public class GoogleTasksServiceTests {
     }
 
     @Test
-    void getAllLists_bodyEmpty() {
+    public void getAllLists_bodyEmpty() {
         mockWebServer.enqueue(new MockResponse()
             .setResponseCode(200)
             .addHeader("Content-Type", "application/json")
