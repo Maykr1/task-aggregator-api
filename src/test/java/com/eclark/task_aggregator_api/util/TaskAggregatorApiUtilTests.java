@@ -21,7 +21,7 @@ import com.eclark.task_aggregator_api.model.googleCalendar.CalendarEvent;
 import com.eclark.task_aggregator_api.model.googleTasks.Task;
 import com.eclark.task_aggregator_api.model.googleTasks.TaskList;
 
-public class TaskAggregatorApiUtilTests {
+class TaskAggregatorApiUtilTests {
     @Test
     void getTaskListIds_mapIds() {
         TaskList task1 = new TaskList();

@@ -19,7 +19,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class GoogleTasksServiceImpl implements GoogleTasksService {
-    private static final Logger logger = LoggerFactory.getLogger(GoogleEventsServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(GoogleTasksServiceImpl.class);
     private final RestClient googleRestClient;
 
     /**

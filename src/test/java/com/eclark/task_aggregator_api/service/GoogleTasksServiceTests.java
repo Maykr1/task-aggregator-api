@@ -25,7 +25,7 @@ import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
 
-public class GoogleTasksServiceTests {
+class GoogleTasksServiceTests {
     private MockWebServer mockWebServer;
     private GoogleTasksServiceImpl googleTasksServiceImpl;
 
@@ -48,7 +48,7 @@ public class GoogleTasksServiceTests {
     }
 
     @Test
-    public void getAllLists() throws Exception {
+    void getAllLists() throws Exception {
         mockWebServer.enqueue(new MockResponse()
             .setResponseCode(200)
             .addHeader("Content-Type", "application/json")
@@ -73,7 +73,7 @@ public class GoogleTasksServiceTests {
     }
 
     @Test
-    public void getTasksById() throws Exception {
+    void getTasksById() throws Exception {
         mockWebServer.enqueue(new MockResponse()
             .setResponseCode(200)
             .addHeader("Content-Type", "application/json")
@@ -107,7 +107,7 @@ public class GoogleTasksServiceTests {
     }
 
     @Test
-    public void getAllLists_bodyEmpty() {
+    void getAllLists_bodyEmpty() {
         mockWebServer.enqueue(new MockResponse()
             .setResponseCode(200)
             .addHeader("Content-Type", "application/json")

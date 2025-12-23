@@ -27,7 +27,7 @@ import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
 
-public class GoogleEventsServiceTests {
+class GoogleEventsServiceTests {
     private MockWebServer mockWebServer;
     private GoogleEventsServiceImpl googleEventsServiceImpl;
 
@@ -45,12 +45,12 @@ public class GoogleEventsServiceTests {
     }
 
     @AfterEach
-    void teardown() throws Exception {
+    public void teardown() throws Exception {
         mockWebServer.shutdown();
     }
 
     @Test
-    public void getUpcomingCalendarEvents() throws Exception {
+    void getUpcomingCalendarEvents() throws Exception {
         mockWebServer.enqueue(new MockResponse()
             .setResponseCode(200)
             .addHeader("Content-Type", "application/json")
@@ -95,7 +95,7 @@ public class GoogleEventsServiceTests {
     }
 
     @Test
-    public void getTodaysEvents() throws Exception {
+    void getTodaysEvents() throws Exception {
         mockWebServer.enqueue(new MockResponse()
             .setResponseCode(200)
             .addHeader("Content-Type", "application/json")
@@ -139,7 +139,7 @@ public class GoogleEventsServiceTests {
     }
 
     @Test
-    public void getUpcomingCalendarEvents_empty() throws Exception {
+    void getUpcomingCalendarEvents_empty() {
         mockWebServer.enqueue(new MockResponse()
                 .setResponseCode(200)
                 .addHeader("Content-Type", "application/json")

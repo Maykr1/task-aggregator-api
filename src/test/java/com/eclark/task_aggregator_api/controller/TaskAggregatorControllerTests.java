@@ -25,7 +25,7 @@ import com.eclark.task_aggregator_api.service.GoogleTasksService;
 
 @WebMvcTest(TaskAggregatorController.class)
 @AutoConfigureMockMvc(addFilters = false)
-public class TaskAggregatorControllerTests {
+class TaskAggregatorControllerTests {
     
     @Autowired
     private MockMvc mockMvc;
@@ -69,7 +69,7 @@ public class TaskAggregatorControllerTests {
     }
 
     @Test
-    public void getAllLists() throws Exception {
+    void getAllLists() throws Exception {
         when(googleTasksService.getAllLists()).thenReturn(List.of(taskList1, taskList2));
         
         mockMvc.perform(get("/api/tasks/lists")
@@ -84,7 +84,7 @@ public class TaskAggregatorControllerTests {
     }
 
     @Test
-    public void getTasksByListId() throws Exception {
+    void getTasksByListId() throws Exception {
         when(googleTasksService.getTasksByListId("A")).thenReturn(List.of(task1, task2));
 
         mockMvc.perform(get("/api/tasks/{id}", "A")
@@ -100,7 +100,7 @@ public class TaskAggregatorControllerTests {
     }
 
     @Test
-    public void getUpcomingGoogleEvents() throws Exception {
+    void getUpcomingGoogleEvents() throws Exception {
         when(googleEventsService.getUpcomingCalendarEvents()).thenReturn(List.of(calendarEvent1, calendarEvent2));
 
         mockMvc.perform(get("/api/calendars/upcoming")
@@ -115,7 +115,7 @@ public class TaskAggregatorControllerTests {
     }
 
     @Test
-    public void getTodaysGoogleEvents() throws Exception {
+    void getTodaysGoogleEvents() throws Exception {
         when(googleEventsService.getTodaysEvents()).thenReturn(List.of(calendarEvent1, calendarEvent2));
 
         mockMvc.perform(get("/api/calendars/today")
