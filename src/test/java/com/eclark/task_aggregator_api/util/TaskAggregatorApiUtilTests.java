@@ -179,8 +179,8 @@ public class TaskAggregatorApiUtilTests {
     }
 
     @Test
-    void formatTasks_null_throws() {
-        assertEquals(TaskAggregatorApiUtil.formatEvents(null), new ArrayList<>());
+    void formatTasks_null() {
+        assertEquals(TaskAggregatorApiUtil.formatEvents(null), new ArrayList<Task>());
     }
 
     @Test

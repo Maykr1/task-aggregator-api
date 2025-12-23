@@ -45,14 +45,20 @@ public class GoogleEventsServiceImpl implements GoogleEventsService {
                 )
                 .retrieve()
                 .body(CalendarEventsWrapper.class);
+
+            if (response == null || response.getCalendarEvents() == null) {
+                logger.warn("Google Calendar returned no body/items for upcoming events");
+                return List.of();
+            }
+
+            return TaskAggregatorApiUtil.formatEvents(response.getCalendarEvents());
+            
         } catch (Exception e) {
             logger.error("[UnexpectedException] - Unexpected Error occured: {}", e.getMessage(), e);
+            return List.of();
+        } finally {
+            logger.info("[{} ms] - Finished retrieving upcoming Google Calendar Events", System.currentTimeMillis() - start);
         }
-
-        List<CalendarEvent> calendarEvents = TaskAggregatorApiUtil.formatEvents(response.getCalendarEvents());
-
-        logger.info("[{} ms] - Finished retrieving upcoming Google Calendar Events", System.currentTimeMillis() - start);
-        return calendarEvents;
     }
 
     @Override
@@ -76,13 +82,19 @@ public class GoogleEventsServiceImpl implements GoogleEventsService {
                 )
                 .retrieve()
                 .body(CalendarEventsWrapper.class);
+            
+            if (response == null || response.getCalendarEvents() == null) {
+                logger.warn("Google Calendar returned no body/items for upcoming events");
+                return List.of();
+            }
+
+            return TaskAggregatorApiUtil.formatEvents(response.getCalendarEvents());
+
         } catch (Exception e) {
             logger.error("[UnexpectedException] - Unexpected Error occured: {}", e.getMessage(), e);
+            return List.of();
+        } finally {
+            logger.info("[{} ms] - Finished retrieving today's Google Calendar Events", System.currentTimeMillis() - start);
         }
-
-        List<CalendarEvent> calendarEvents = TaskAggregatorApiUtil.formatEvents(response.getCalendarEvents());
-
-        logger.info("[{} ms] - Finished retrieving today's Google Calendar Events", System.currentTimeMillis() - start);
-        return calendarEvents;
     }
 }

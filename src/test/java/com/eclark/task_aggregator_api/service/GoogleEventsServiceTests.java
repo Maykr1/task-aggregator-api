@@ -3,12 +3,12 @@ package com.eclark.task_aggregator_api.service;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.mockStatic;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.AfterEach;
@@ -145,6 +145,6 @@ public class GoogleEventsServiceTests {
                 .addHeader("Content-Type", "application/json")
                 .setBody(""));
 
-        assertThrows(NullPointerException.class, () -> googleEventsServiceImpl.getUpcomingCalendarEvents());
+        assertEquals(googleEventsServiceImpl.getUpcomingCalendarEvents(), new ArrayList<>());
     }
 }

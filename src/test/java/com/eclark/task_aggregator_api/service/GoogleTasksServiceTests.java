@@ -3,10 +3,11 @@ package com.eclark.task_aggregator_api.service;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.times;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.AfterEach;
@@ -112,6 +113,6 @@ public class GoogleTasksServiceTests {
             .addHeader("Content-Type", "application/json")
             .setBody(""));
 
-        assertThrows(Exception.class, () -> googleTasksServiceImpl.getAllLists());
+        assertEquals(googleTasksServiceImpl.getAllLists(), new ArrayList<>());
     }
 }

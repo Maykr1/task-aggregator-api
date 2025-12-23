@@ -41,14 +41,20 @@ public class GoogleTasksServiceImpl implements GoogleTasksService {
                 )
                 .retrieve()
                 .body(ListItemsWrapper.class);
+
+            if (response == null || response.getTaskLists() == null) {
+                logger.warn("Google Tasks returned no lists");
+                return List.of();
+            }
+            
+            return response.getTaskLists();
+
         } catch (Exception e) {
             logger.error("[UnexpectedException] - Unexpected Error occured: {}", e.getMessage(), e);
+            return List.of();
+        } finally {
+            logger.info("[{} ms] - Finished retrieving google tasks lists", System.currentTimeMillis() - start);
         }
-
-        List<TaskList> taskLists = response.getTaskLists();
-
-        logger.info("[{} ms] - Finished retrieving google tasks lists", System.currentTimeMillis() - start);
-        return taskLists;
     }
 
     /**
@@ -72,13 +78,19 @@ public class GoogleTasksServiceImpl implements GoogleTasksService {
                 )
                 .retrieve()
                 .body(TaskItemsWrapper.class);
+
+            if (response == null || response.getTasks() == null) {
+                logger.warn("Google Tasks returned no body/items for task list id: {}", taskListId);
+                return List.of();
+            }
+
+            return TaskAggregatorApiUtil.formatTasks(response.getTasks());
+            
         } catch (Exception e) {
             logger.error("[UnexpectedException] - Unexpected Error occured: {}", e.getMessage(), e);
+            return List.of();
+        } finally {
+            logger.info("[{} ms] - Finished retrieving google tasks for task list: {}", System.currentTimeMillis() - start, taskListId);
         }
-
-        List<Task> tasks = TaskAggregatorApiUtil.formatTasks(response.getTasks());
-
-        logger.info("[{} ms] - Finished retrieving google tasks for task list: {}", System.currentTimeMillis() - start, taskListId);
-        return tasks;
     }
 }
