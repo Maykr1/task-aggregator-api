@@ -3,6 +3,7 @@ package com.eclark.task_aggregator_api.service;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.mockStatic;
 
@@ -95,6 +96,16 @@ class GoogleEventsServiceTests {
     }
 
     @Test
+    void getUpcomingEvents_fails() throws Exception {
+        mockWebServer.shutdown();
+
+        assertThrows(
+            Exception.class,
+            () -> googleEventsServiceImpl.getUpcomingCalendarEvents()
+        );
+    }
+
+    @Test
     void getTodaysEvents() throws Exception {
         mockWebServer.enqueue(new MockResponse()
             .setResponseCode(200)
@@ -146,5 +157,15 @@ class GoogleEventsServiceTests {
                 .setBody(""));
 
         assertEquals(googleEventsServiceImpl.getUpcomingCalendarEvents(), new ArrayList<>());
+    }
+
+    @Test
+    void getTodaysEvents_fails() throws Exception {
+        mockWebServer.shutdown();
+
+        assertThrows(
+            Exception.class,
+            () -> googleEventsServiceImpl.getTodaysEvents()
+        );
     }
 }

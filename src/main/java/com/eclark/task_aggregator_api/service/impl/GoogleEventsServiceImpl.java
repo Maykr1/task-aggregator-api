@@ -55,7 +55,7 @@ public class GoogleEventsServiceImpl implements GoogleEventsService {
             
         } catch (Exception e) {
             logger.error("[UnexpectedException] - Unexpected Error occured: {}", e.getMessage(), e);
-            return List.of();
+            throw e;
         } finally {
             logger.info("[{} ms] - Finished retrieving upcoming Google Calendar Events", System.currentTimeMillis() - start);
         }
@@ -92,7 +92,7 @@ public class GoogleEventsServiceImpl implements GoogleEventsService {
 
         } catch (Exception e) {
             logger.error("[UnexpectedException] - Unexpected Error occured: {}", e.getMessage(), e);
-            return List.of();
+            throw e;
         } finally {
             logger.info("[{} ms] - Finished retrieving today's Google Calendar Events", System.currentTimeMillis() - start);
         }

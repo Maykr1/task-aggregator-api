@@ -3,6 +3,7 @@ package com.eclark.task_aggregator_api.service;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.times;
@@ -114,5 +115,35 @@ class GoogleTasksServiceTests {
             .setBody(""));
 
         assertEquals(googleTasksServiceImpl.getAllLists(), new ArrayList<>());
+    }
+
+    @Test
+    void getTasksByListId_bodyEmpty() {
+        mockWebServer.enqueue(new MockResponse()
+            .setResponseCode(200)
+            .addHeader("Content-Type", "application/json")
+            .setBody(""));
+
+        assertEquals(googleTasksServiceImpl.getTasksByListId("A"), new ArrayList<>());
+    }
+
+    @Test
+    void getAllLists_fails() throws Exception {
+        mockWebServer.shutdown();
+
+        assertThrows(
+            Exception.class,
+            () -> googleTasksServiceImpl.getAllLists()
+        );
+    }
+
+    @Test
+    void getTaskListsById_fails() throws Exception {
+        mockWebServer.shutdown();
+
+        assertThrows(
+            Exception.class,
+            () -> googleTasksServiceImpl.getTasksByListId("A")
+        );
     }
 }

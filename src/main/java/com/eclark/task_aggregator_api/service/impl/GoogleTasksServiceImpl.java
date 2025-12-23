@@ -51,7 +51,7 @@ public class GoogleTasksServiceImpl implements GoogleTasksService {
 
         } catch (Exception e) {
             logger.error("[UnexpectedException] - Unexpected Error occured: {}", e.getMessage(), e);
-            return List.of();
+            throw e;
         } finally {
             logger.info("[{} ms] - Finished retrieving google tasks lists", System.currentTimeMillis() - start);
         }
@@ -88,7 +88,7 @@ public class GoogleTasksServiceImpl implements GoogleTasksService {
             
         } catch (Exception e) {
             logger.error("[UnexpectedException] - Unexpected Error occured: {}", e.getMessage(), e);
-            return List.of();
+            throw e;
         } finally {
             logger.info("[{} ms] - Finished retrieving google tasks for task list: {}", System.currentTimeMillis() - start, taskListId);
         }
