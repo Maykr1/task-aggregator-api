@@ -1,4 +1,4 @@
-package com.eclark.task_aggregator_api.model;
+package com.eclark.task_aggregator_api.model.googleTasks;
 
 import java.util.List;
 
@@ -15,9 +15,6 @@ import lombok.Getter;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TaskItemsWrapper {
-    private String kind;
-    private String etag;
-
     @JsonProperty("items")
     private List<Task> tasks;
 }

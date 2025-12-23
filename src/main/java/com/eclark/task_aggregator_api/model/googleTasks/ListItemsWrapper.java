@@ -1,0 +1,20 @@
+package com.eclark.task_aggregator_api.model.googleTasks;
+
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import lombok.Getter;
+
+/**
+ * Wrapper for all APIs on Google Tasks
+ */
+@Getter
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class ListItemsWrapper {
+    @JsonProperty("items")
+    private List<TaskList> taskLists;
+}

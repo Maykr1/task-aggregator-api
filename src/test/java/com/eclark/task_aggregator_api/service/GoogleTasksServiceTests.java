@@ -3,10 +3,11 @@ package com.eclark.task_aggregator_api.service;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.times;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.AfterEach;
@@ -15,8 +16,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.springframework.web.client.RestClient;
 
-import com.eclark.task_aggregator_api.model.Task;
-import com.eclark.task_aggregator_api.model.TaskList;
+import com.eclark.task_aggregator_api.model.googleTasks.Task;
+import com.eclark.task_aggregator_api.model.googleTasks.TaskList;
 import com.eclark.task_aggregator_api.service.impl.GoogleTasksServiceImpl;
 import com.eclark.task_aggregator_api.util.TaskAggregatorApiUtil;
 
@@ -29,7 +30,7 @@ public class GoogleTasksServiceTests {
     private GoogleTasksServiceImpl googleTasksServiceImpl;
 
     @BeforeEach
-    void setUp() throws Exception {
+    public void setUp() throws Exception {
         mockWebServer = new MockWebServer();
         mockWebServer.start();
 
@@ -42,12 +43,12 @@ public class GoogleTasksServiceTests {
     }
 
     @AfterEach
-    void teardown() throws Exception {
+    public void teardown() throws Exception {
         mockWebServer.shutdown();
     }
 
     @Test
-    void getAllLists() throws Exception {
+    public void getAllLists() throws Exception {
         mockWebServer.enqueue(new MockResponse()
             .setResponseCode(200)
             .addHeader("Content-Type", "application/json")
@@ -72,7 +73,7 @@ public class GoogleTasksServiceTests {
     }
 
     @Test
-    void getTasksById() throws Exception {
+    public void getTasksById() throws Exception {
         mockWebServer.enqueue(new MockResponse()
             .setResponseCode(200)
             .addHeader("Content-Type", "application/json")
@@ -106,12 +107,12 @@ public class GoogleTasksServiceTests {
     }
 
     @Test
-    void getAllLists_bodyEmpty() {
+    public void getAllLists_bodyEmpty() {
         mockWebServer.enqueue(new MockResponse()
             .setResponseCode(200)
             .addHeader("Content-Type", "application/json")
             .setBody(""));
 
-        assertThrows(Exception.class, () -> googleTasksServiceImpl.getAllLists());
+        assertEquals(googleTasksServiceImpl.getAllLists(), new ArrayList<>());
     }
 }

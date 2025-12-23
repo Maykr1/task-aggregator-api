@@ -1,6 +1,5 @@
 package com.eclark.task_aggregator_api.controller;
 
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -18,8 +17,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import com.eclark.task_aggregator_api.model.Task;
-import com.eclark.task_aggregator_api.model.TaskList;
+import com.eclark.task_aggregator_api.model.googleCalendar.CalendarEvent;
+import com.eclark.task_aggregator_api.model.googleTasks.Task;
+import com.eclark.task_aggregator_api.model.googleTasks.TaskList;
 import com.eclark.task_aggregator_api.service.GoogleEventsService;
 import com.eclark.task_aggregator_api.service.GoogleTasksService;
 
@@ -40,6 +40,8 @@ public class TaskAggregatorControllerTests {
     TaskList taskList2;
     Task task1;
     Task task2;
+    CalendarEvent calendarEvent1;
+    CalendarEvent calendarEvent2;
 
     @BeforeEach
     public void setup() {
@@ -57,13 +59,20 @@ public class TaskAggregatorControllerTests {
         task2.setId("c1");
         task2.setTitle("Child");
         task2.setParent("p1");
+
+        calendarEvent1 = new CalendarEvent();
+        calendarEvent1.setId("1");
+        calendarEvent1.setTitle("Doctor's Appointment");
+        calendarEvent2 = new CalendarEvent();
+        calendarEvent2.setId("2");
+        calendarEvent2.setTitle("Grocery Store");
     }
 
     @Test
     public void getAllLists() throws Exception {
         when(googleTasksService.getAllLists()).thenReturn(List.of(taskList1, taskList2));
         
-        mockMvc.perform(get("/api/tasks")
+        mockMvc.perform(get("/api/tasks/lists")
                 .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -86,7 +95,37 @@ public class TaskAggregatorControllerTests {
             .andExpect(jsonPath("$[0].id").value("p1"))
             .andExpect(jsonPath("$[1].id").value("c1"));
 
-        verify(googleTasksService, times(1)).getTasksByListId("A");
+        verify(googleTasksService).getTasksByListId("A");
         verifyNoInteractions(googleEventsService);
+    }
+
+    @Test
+    public void getUpcomingGoogleEvents() throws Exception {
+        when(googleEventsService.getUpcomingCalendarEvents()).thenReturn(List.of(calendarEvent1, calendarEvent2));
+
+        mockMvc.perform(get("/api/calendars/upcoming")
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.length()").value(2))
+            .andExpect(jsonPath("$[0].summary").value("Doctor's Appointment"))
+            .andExpect(jsonPath("$[1].summary").value("Grocery Store"));
+
+        verify(googleEventsService).getUpcomingCalendarEvents();
+    }
+
+    @Test
+    public void getTodaysGoogleEvents() throws Exception {
+        when(googleEventsService.getTodaysEvents()).thenReturn(List.of(calendarEvent1, calendarEvent2));
+
+        mockMvc.perform(get("/api/calendars/today")
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.length()").value(2))
+            .andExpect(jsonPath("$[0].summary").value("Doctor's Appointment"))
+            .andExpect(jsonPath("$[1].summary").value("Grocery Store"));
+
+        verify(googleEventsService).getTodaysEvents();
     }
 }

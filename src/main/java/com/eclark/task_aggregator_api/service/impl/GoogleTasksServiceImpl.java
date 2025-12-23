@@ -7,10 +7,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
-import com.eclark.task_aggregator_api.model.ListItemsWrapper;
-import com.eclark.task_aggregator_api.model.Task;
-import com.eclark.task_aggregator_api.model.TaskItemsWrapper;
-import com.eclark.task_aggregator_api.model.TaskList;
+import com.eclark.task_aggregator_api.model.googleTasks.ListItemsWrapper;
+import com.eclark.task_aggregator_api.model.googleTasks.Task;
+import com.eclark.task_aggregator_api.model.googleTasks.TaskItemsWrapper;
+import com.eclark.task_aggregator_api.model.googleTasks.TaskList;
 import com.eclark.task_aggregator_api.service.GoogleTasksService;
 import com.eclark.task_aggregator_api.util.TaskAggregatorApiUtil;
 
@@ -30,21 +30,31 @@ public class GoogleTasksServiceImpl implements GoogleTasksService {
     @Override
     public List<TaskList> getAllLists() {
         long start = System.currentTimeMillis();
-
+        ListItemsWrapper response = null;
         logger.info("Retrieving google tasks lists");
+        
+        try {
+            response = googleRestClient.get()
+                .uri(uriBuilder -> uriBuilder
+                    .pathSegment("tasks", "v1", "users", "@me", "lists")
+                    .build()
+                )
+                .retrieve()
+                .body(ListItemsWrapper.class);
 
-        ListItemsWrapper response = googleRestClient.get()
-            .uri(uriBuilder -> uriBuilder
-                .pathSegment("tasks", "v1", "users", "@me", "lists")
-                .build()
-            )
-            .retrieve()
-            .body(ListItemsWrapper.class);
+            if (response == null || response.getTaskLists() == null) {
+                logger.warn("Google Tasks returned no lists");
+                return List.of();
+            }
+            
+            return response.getTaskLists();
 
-        List<TaskList> taskLists = response.getTaskLists();
-
-        logger.info("[{} ms] - Finished retrieving google tasks lists", System.currentTimeMillis() - start);
-        return taskLists;
+        } catch (Exception e) {
+            logger.error("[UnexpectedException] - Unexpected Error occured: {}", e.getMessage(), e);
+            return List.of();
+        } finally {
+            logger.info("[{} ms] - Finished retrieving google tasks lists", System.currentTimeMillis() - start);
+        }
     }
 
     /**
@@ -56,21 +66,31 @@ public class GoogleTasksServiceImpl implements GoogleTasksService {
      */
     @Override
     public List<Task> getTasksByListId(String taskListId) {
-        long start = System.currentTimeMillis();
-
+        long start                  = System.currentTimeMillis();
+        TaskItemsWrapper response   = null;
         logger.info("Retrieving google tasks for task list: {}" , taskListId);
         
-        TaskItemsWrapper response = googleRestClient.get()
-            .uri(uriBuilder -> uriBuilder
-                .pathSegment("tasks", "v1", "lists", "{tasklist}", "tasks")
-                .build(taskListId)
-            )
-            .retrieve()
-            .body(TaskItemsWrapper.class);
+        try {
+            response = googleRestClient.get()
+                .uri(uriBuilder -> uriBuilder
+                    .pathSegment("tasks", "v1", "lists", "{tasklist}", "tasks")
+                    .build(taskListId)
+                )
+                .retrieve()
+                .body(TaskItemsWrapper.class);
 
-        List<Task> tasks = TaskAggregatorApiUtil.formatTasks(response.getTasks());
+            if (response == null || response.getTasks() == null) {
+                logger.warn("Google Tasks returned no body/items for task list id: {}", taskListId);
+                return List.of();
+            }
 
-        logger.info("[{} ms] - Finished retrieving google tasks for task list: {}", System.currentTimeMillis() - start, taskListId);
-        return tasks;
+            return TaskAggregatorApiUtil.formatTasks(response.getTasks());
+            
+        } catch (Exception e) {
+            logger.error("[UnexpectedException] - Unexpected Error occured: {}", e.getMessage(), e);
+            return List.of();
+        } finally {
+            logger.info("[{} ms] - Finished retrieving google tasks for task list: {}", System.currentTimeMillis() - start, taskListId);
+        }
     }
 }
