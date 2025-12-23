@@ -8,17 +8,25 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.eclark.task_aggregator_api.model.googleCalendar.CalendarEvent;
 import com.eclark.task_aggregator_api.model.googleTasks.Task;
 import com.eclark.task_aggregator_api.model.googleTasks.TaskList;
 
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@UtilityClass
 public class TaskAggregatorApiUtil {
+    private static final Logger logger = LoggerFactory.getLogger(TaskAggregatorApiUtil.class);
+
     public static List<String> getTaskListIds(List<TaskList> taskLists) {
         if (taskLists == null) {
-            throw new IllegalArgumentException("taskLists are null");
+            logger.error("[IllegalArgumentException] - No Google Tasks lists are provided");
+            throw new IllegalArgumentException("No Google Tasks lists are provided");
         }
 
         return taskLists.stream()
@@ -41,7 +49,6 @@ public class TaskAggregatorApiUtil {
             for (Task child: tasks) {
                 if (child.getParent() != null && parent.getId().equals(child.getParent())) {
                     children.add(child);
-                    continue;
                 }
             }
 

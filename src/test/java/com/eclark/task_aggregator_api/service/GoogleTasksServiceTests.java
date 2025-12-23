@@ -3,6 +3,7 @@ package com.eclark.task_aggregator_api.service;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.times;
@@ -25,7 +26,7 @@ import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
 
-public class GoogleTasksServiceTests {
+class GoogleTasksServiceTests {
     private MockWebServer mockWebServer;
     private GoogleTasksServiceImpl googleTasksServiceImpl;
 
@@ -48,7 +49,7 @@ public class GoogleTasksServiceTests {
     }
 
     @Test
-    public void getAllLists() throws Exception {
+    void getAllLists() throws Exception {
         mockWebServer.enqueue(new MockResponse()
             .setResponseCode(200)
             .addHeader("Content-Type", "application/json")
@@ -73,7 +74,7 @@ public class GoogleTasksServiceTests {
     }
 
     @Test
-    public void getTasksById() throws Exception {
+    void getTasksById() throws Exception {
         mockWebServer.enqueue(new MockResponse()
             .setResponseCode(200)
             .addHeader("Content-Type", "application/json")
@@ -107,12 +108,42 @@ public class GoogleTasksServiceTests {
     }
 
     @Test
-    public void getAllLists_bodyEmpty() {
+    void getAllLists_bodyEmpty() {
         mockWebServer.enqueue(new MockResponse()
             .setResponseCode(200)
             .addHeader("Content-Type", "application/json")
             .setBody(""));
 
         assertEquals(googleTasksServiceImpl.getAllLists(), new ArrayList<>());
+    }
+
+    @Test
+    void getTasksByListId_bodyEmpty() {
+        mockWebServer.enqueue(new MockResponse()
+            .setResponseCode(200)
+            .addHeader("Content-Type", "application/json")
+            .setBody(""));
+
+        assertEquals(googleTasksServiceImpl.getTasksByListId("A"), new ArrayList<>());
+    }
+
+    @Test
+    void getAllLists_fails() throws Exception {
+        mockWebServer.shutdown();
+
+        assertThrows(
+            Exception.class,
+            () -> googleTasksServiceImpl.getAllLists()
+        );
+    }
+
+    @Test
+    void getTaskListsById_fails() throws Exception {
+        mockWebServer.shutdown();
+
+        assertThrows(
+            Exception.class,
+            () -> googleTasksServiceImpl.getTasksByListId("A")
+        );
     }
 }

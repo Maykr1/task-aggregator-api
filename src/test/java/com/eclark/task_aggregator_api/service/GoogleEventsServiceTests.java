@@ -3,6 +3,7 @@ package com.eclark.task_aggregator_api.service;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.mockStatic;
 
@@ -27,7 +28,7 @@ import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
 
-public class GoogleEventsServiceTests {
+class GoogleEventsServiceTests {
     private MockWebServer mockWebServer;
     private GoogleEventsServiceImpl googleEventsServiceImpl;
 
@@ -45,12 +46,12 @@ public class GoogleEventsServiceTests {
     }
 
     @AfterEach
-    void teardown() throws Exception {
+    public void teardown() throws Exception {
         mockWebServer.shutdown();
     }
 
     @Test
-    public void getUpcomingCalendarEvents() throws Exception {
+    void getUpcomingCalendarEvents() throws Exception {
         mockWebServer.enqueue(new MockResponse()
             .setResponseCode(200)
             .addHeader("Content-Type", "application/json")
@@ -95,7 +96,17 @@ public class GoogleEventsServiceTests {
     }
 
     @Test
-    public void getTodaysEvents() throws Exception {
+    void getUpcomingEvents_fails() throws Exception {
+        mockWebServer.shutdown();
+
+        assertThrows(
+            Exception.class,
+            () -> googleEventsServiceImpl.getUpcomingCalendarEvents()
+        );
+    }
+
+    @Test
+    void getTodaysEvents() throws Exception {
         mockWebServer.enqueue(new MockResponse()
             .setResponseCode(200)
             .addHeader("Content-Type", "application/json")
@@ -139,12 +150,22 @@ public class GoogleEventsServiceTests {
     }
 
     @Test
-    public void getUpcomingCalendarEvents_empty() throws Exception {
+    void getUpcomingCalendarEvents_empty() {
         mockWebServer.enqueue(new MockResponse()
                 .setResponseCode(200)
                 .addHeader("Content-Type", "application/json")
                 .setBody(""));
 
         assertEquals(googleEventsServiceImpl.getUpcomingCalendarEvents(), new ArrayList<>());
+    }
+
+    @Test
+    void getTodaysEvents_fails() throws Exception {
+        mockWebServer.shutdown();
+
+        assertThrows(
+            Exception.class,
+            () -> googleEventsServiceImpl.getTodaysEvents()
+        );
     }
 }
