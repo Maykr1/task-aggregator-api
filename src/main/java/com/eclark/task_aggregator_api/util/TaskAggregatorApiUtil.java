@@ -11,8 +11,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.eclark.task_aggregator_api.model.googleCalendar.CalendarEvent;
+import com.eclark.task_aggregator_api.model.googleCalendar.CalendarEventResponse;
 import com.eclark.task_aggregator_api.model.googleTasks.Task;
 import com.eclark.task_aggregator_api.model.googleTasks.TaskList;
+import com.eclark.task_aggregator_api.model.googleTasks.TaskResponse;
 
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -109,5 +111,19 @@ public class TaskAggregatorApiUtil {
 
             return odt.format(fmt);
         }
+    }
+
+    public static TaskResponse buildTaskResponse(Task task, String message) {
+        return TaskResponse.builder()
+            .title(task.getTitle())
+            .message(message)
+            .build();
+    }
+
+    public static CalendarEventResponse buildCalendarEventResponse(CalendarEvent calendarEvent, String message) {
+        return CalendarEventResponse.builder()
+            .title(calendarEvent.getTitle())
+            .message(message)
+            .build();
     }
 }
