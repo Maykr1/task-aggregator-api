@@ -7,7 +7,6 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -108,7 +107,6 @@ public class TaskAggregatorApiUtil {
             LocalDate odt = LocalDate.parse(dateTime);
             DateTimeFormatter fmt = DateTimeFormatter.ofPattern("MMM d, yyyy");
 
-            log.info(odt.format(fmt));
             return odt.format(fmt);
         }
     }

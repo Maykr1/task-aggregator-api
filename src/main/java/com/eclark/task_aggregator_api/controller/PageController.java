@@ -3,7 +3,6 @@ package com.eclark.task_aggregator_api.controller;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,7 +18,9 @@ import com.eclark.task_aggregator_api.util.TaskAggregatorApiUtil;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 public class PageController {
@@ -43,6 +44,10 @@ public class PageController {
         // Retrieve Todays & Upcoming Calendar Events
         List<CalendarEvent> todaysCalendarEvents = googleEventsService.getTodaysEvents();
         List<CalendarEvent> upcomingCalendarEvents = googleEventsService.getUpcomingCalendarEvents();
+
+        log.info("TasksLists Size: {}", taskLists.size());
+        log.info("TasksLists Title: {}", taskLists.getFirst().getTitle());
+        log.info("Tasks size: {}", map.get("X29UWVpfVVJtOWl2VWhfSQ").size());
         
         model.addAttribute("taskLists", taskLists);
         model.addAttribute("tasksMap", map);
@@ -50,6 +55,60 @@ public class PageController {
         model.addAttribute("upcomingCalendarEvents", upcomingCalendarEvents);
 
         return "index";
+    }
+
+    @GetMapping("/today")
+    public String today(Model model) {
+        // Retrieve Lists
+        List<TaskList> taskLists = googleTasksService.getAllLists().stream()
+            .filter(list -> "Today".equalsIgnoreCase(list.getTitle()))
+            .toList();
+
+        // Create HashMap of:
+        // <Id of Today, List<Tasks>>
+        Map<String, List<Task>> map = new HashMap<>();
+        for (String id : TaskAggregatorApiUtil.getTaskListIds(taskLists)) {
+            List<Task> tasks = googleTasksService.getTasksByListId(id);
+
+            map.put(id, tasks);
+        }
+
+        List<CalendarEvent> todaysCalendarEvents = googleEventsService.getTodaysEvents();
+
+        log.info("TasksLists Size: {}", taskLists.size());
+        log.info("TasksLists Title: {}", taskLists.getFirst().getTitle());
+        log.info("Tasks size: {}", map.get("X29UWVpfVVJtOWl2VWhfSQ").size());
+
+        model.addAttribute("taskLists", taskLists);
+        model.addAttribute("tasksMap", map);
+        model.addAttribute("todaysCalendarEvents", todaysCalendarEvents);
+
+        return "today";
+    }
+
+    @GetMapping("/future")
+    public String future(Model model) {
+        // Retrieve Lists except for Today
+        List<TaskList> taskLists = googleTasksService.getAllLists().stream()
+            .filter(list -> !"Today".equalsIgnoreCase(list.getTitle()))
+            .toList();
+        
+        // Create HashMap of:
+        // <ID TaskList, List<Tasks>>
+        Map<String, List<Task>> map = new HashMap<>();
+        for (String id : TaskAggregatorApiUtil.getTaskListIds(taskLists)) {
+            List<Task> tasks = googleTasksService.getTasksByListId(id);
+
+            map.put(id, tasks);
+        }
+
+        List<CalendarEvent> upcomingCalendarEvents = googleEventsService.getUpcomingCalendarEvents();
+
+        model.addAttribute("taskLists", taskLists);
+        model.addAttribute("tasksMap", map);
+        model.addAttribute("upcomingCalendarEvents", upcomingCalendarEvents);
+
+        return "future";
     }
 
     @GetMapping("/back-to-portfolio")
