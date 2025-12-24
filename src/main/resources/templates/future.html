@@ -21,9 +21,9 @@
 
             <div class="collapse navbar-collapse" id ="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-md-0">
-                    <li class="nav-item"><a class="nav-link active" th:href="@{/}">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/}">Home</a></li>
                     <li class="nav-item"><a class="nav-link" th:href="@{/today}">Today</a></li>
-                    <li class="nav-item"><a class="nav-link" th:href="@{/future}">Future</a></li>
+                    <li class="nav-item"><a class="nav-link active" th:href="@{/future}">Future</a></li>
                 </ul>
             </div>
         </div>
@@ -93,23 +93,6 @@
         </div>
 
         <div class="row">
-            <div class="col-md-6">
-                <div class="card mb-4">
-                    <div class="card-header fw-bolder"> Today </div>
-
-                    <!-- Events List -->
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item" th:each="event : ${todaysCalendarEvents}">
-                            <a th:href="${event.htmlLink}" class="text-decoration-none text-reset">
-                                <div class="fw-medium" th:text="${event.title}"></div>
-                                <div class="small text-muted fw-semibold" th:if="${event.start.dateTime != null}" 
-                                    th:text="${T(com.eclark.task_aggregator_api.util.TaskAggregatorApiUtil).formatEventTimeWithZone(event.start.dateTime)}"></div>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-
             <div class="col-md-6">
                 <div class="card mb-4">
                     <div class="card-header fw-bolder"> Upcoming </div>
