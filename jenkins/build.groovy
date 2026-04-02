@@ -48,11 +48,19 @@ pipeline {
         stage('Publish Snapshot') {
             steps {
                 script {
-                    env.SNAPSHOT_VERSION = getSnapshotVersion()
+                    env.SNAPSHOT_VERSION = getSnapshotVersion('maven')
                 }
 
                 setVersion('maven', env.SNAPSHOT_VERSION)
-                containerizeApp('maven', APP_NAME, SNAPSHOT_REPO, DOCKER_BASE, env.COMMIT_ID) // env.COMMIT_ID is set inside of getSnapshotVersion()
+
+                containerizeApp(
+                    'maven', 
+                    APP_NAME, 
+                    SNAPSHOT_REPO, 
+                    DOCKER_BASE, 
+                    env.COMMIT_ID, 
+                    'both'
+                )
             }
         }
     }

@@ -48,11 +48,19 @@ pipeline {
         stage('Publish Release') {
             steps {
                 script {
-                    env.RELEASE_VERSION = getReleaseVersion('maven')
+                    env.RELEASE_VERSION = getReleaseVersion()
                 }
 
                 setVersion('maven', env.RELEASE_VERSION)
-                containerizeApp('maven', APP_NAME, RELEASE_REPO, DOCKER_BASE, env.RELEASE_VERSION)
+
+                containerizeApp(
+                    'maven', 
+                    APP_NAME, 
+                    RELEASE_REPO, 
+                    DOCKER_BASE, 
+                    env.RELEASE_VERSION,
+                    'both'
+                )
             }
         }
     }
