@@ -1,23 +1,13 @@
-@Library('shared-jenkins-library') _
+@Library('shared-jenkins-library@setup') _
 
 pipeline {
-    // --- SETUP ---
     agent any
     options { timestamps(); disableConcurrentBuilds() }
-    tools { maven 'maven-3.9.11' }
+    tools { maven 'maven-3.9.16' }
 
     environment {
-        // --- APP ---
+        // --- APP META ---
         APP_NAME            = "task-aggregator-api"
-
-        // --- MAVEN ---
-        NEXUS               = credentials('nexus-deploy')
-        NEXUS_BASE          = "https://nexus.ethansclark.com"
-        SNAPSHOT_REPO_ID    = "maven-snapshots"
-        SNAPSHOT_REPO       = "${NEXUS_BASE}/repository/${SNAPSHOT_REPO_ID}/"
-
-        // --- DOCKER ---
-        DOCKER_BASE         = "localhost:8003"
     }
 
     stages {
@@ -36,31 +26,6 @@ pipeline {
         stage('Build') {
             steps {
                 buildApp('maven')
-            }
-        }
-
-        stage('SonarQube') {
-            steps {
-                sonarApp('maven', APP_NAME)
-            }
-        }
-
-        stage('Publish Snapshot') {
-            steps {
-                script {
-                    env.SNAPSHOT_VERSION = getSnapshotVersion('maven')
-                }
-
-                setVersion('maven', env.SNAPSHOT_VERSION)
-
-                containerizeApp(
-                    'maven', 
-                    APP_NAME, 
-                    SNAPSHOT_REPO, 
-                    DOCKER_BASE, 
-                    env.COMMIT_ID, 
-                    'both'
-                )
             }
         }
     }
